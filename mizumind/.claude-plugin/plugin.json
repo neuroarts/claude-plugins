@@ -1,0 +1,21 @@
+{
+  "name": "mizumind",
+  "displayName": "MizuMind — Wellness",
+  "version": "1.0.0",
+  "description": "Wellness inside Claude: browse the MizuMind catalog, get a guided focus/breathing session, and read or add journal entries. Bundles the MizuMind connector (one enable = connector + coaching skills). Direct, grounded, no fluff.",
+  "author": {
+    "name": "NeuroArts Interactive",
+    "url": "https://mizumind.app"
+  },
+  "homepage": "https://mizumind.app/mizumind/setup",
+  "repository": "https://github.com/neuroarts/neuroarts-inc",
+  "keywords": [
+    "wellness",
+    "focus",
+    "breathing",
+    "journal",
+    "mizumind"
+  ],
+  "mcpServers": "./.mcp.json",
+  "skills": "./skills/"
+}

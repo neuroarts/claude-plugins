@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "mizumind": {
+      "type": "http",
+      "url": "https://mcp.neuroarts.ai/mcp"
+    }
+  }
+}

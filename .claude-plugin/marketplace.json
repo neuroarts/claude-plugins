@@ -1,0 +1,14 @@
+{
+  "name": "neuroarts",
+  "owner": {
+    "name": "NeuroArts Interactive",
+    "email": "hello@neuroarts.ai"
+  },
+  "plugins": [
+    {
+      "name": "mizumind",
+      "source": "./mizumind",
+      "description": "Wellness inside Claude: browse the MizuMind catalog, get guided focus and breathing exercises, journal, and check in — connected to your MizuMind account."
+    }
+  ]
+}
