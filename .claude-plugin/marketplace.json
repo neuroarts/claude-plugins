@@ -1,5 +1,6 @@
 {
   "name": "neuroarts",
+  "description": "Wellness and mindfulness tools from NeuroArts Interactive, brought into Claude. Home of the MizuMind plugin: a catalog of breathing, focus, and wind-down exercises, moment-matched session suggestions, and a private journal — each connected to your MizuMind account.",
   "owner": {
     "name": "NeuroArts Interactive",
     "email": "hello@neuroarts.ai"
