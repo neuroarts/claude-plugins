@@ -9,7 +9,14 @@
     {
       "name": "mizumind",
       "source": "./mizumind",
-      "description": "Wellness inside Claude: browse the MizuMind catalog, get guided focus and breathing exercises, journal, and check in — connected to your MizuMind account."
+      "description": "Wellness inside Claude: browse the MizuMind catalog, get guided focus and breathing exercises, journal, and check in — connected to your MizuMind account.",
+      "author": {
+        "name": "NeuroArts Interactive",
+        "url": "https://neuroarts.ai"
+      },
+      "homepage": "https://mizumind.app/mizumind/setup",
+      "keywords": ["wellness", "breathing", "focus", "mindfulness", "journal"],
+      "category": "productivity"
     }
   ]
 }

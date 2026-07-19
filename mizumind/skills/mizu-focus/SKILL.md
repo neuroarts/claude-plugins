@@ -1,6 +1,6 @@
 ---
 name: mizu-focus
-description: "Guide a live breathing or focus session. Triggers: 'help me focus', 'quick reset', 'I am wired', 'can't sleep'."
+description: "Guide a live breathing or focus session. Triggers: 'help me focus', 'quick reset', 'I am wired', 'can't sleep', 'I need a break', 'I am stressed', 'I am overwhelmed', 'time to wind down', 'I can't concentrate', 'let's do a session'."
 ---
 
 # mizu-focus — guided session
