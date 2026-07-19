@@ -57,7 +57,10 @@ Live via the dedicated public marketplace repo `github.com/neuroarts/claude-plug
 `.claude-plugin/marketplace.json` is at the repo root, so `/plugin marketplace add neuroarts/claude-plugins`
 resolves it directly (CLI custom-marketplace add).
 
-**Web / Desktop**: the Plugins UI is a curated Anthropic/Partners Directory (no custom-marketplace
-add). For web/desktop distribution MizuMind must become a **Partner** plugin, or web users add the
-connector manually until then. See `../../multi-agent-core/reference/claude-plugins-architecture.md`
-for the full research.
+**Web / Desktop / Cowork** (verified 2026-07-19 against the live Desktop UI + the
+"Use plugins in Claude" help article): plugins are supported on Claude web, Claude
+Desktop, and Cowork on paid plans. Install path: **Settings → Plugins** (Customize
+section) → **Add → Add marketplace** (from a GitHub repository) → `neuroarts/claude-plugins`
+→ **Install** MizuMind. The same Add menu accepts a direct plugin-file upload on
+Desktop/Cowork (uploaded copies don't auto-update). Directory listing (ISS-419) adds
+the curated **Browse** path on top of this.
