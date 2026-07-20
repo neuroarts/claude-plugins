@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""PreToolUse hook (ISS-416 #2) — best-effort client-side guard on write tools.
+"""PreToolUse hook — best-effort client-side guard on write tools.
 
 Matcher (hooks.json) scopes this to update_* / delete_* / move_* MizuMind tools.
 This is a DEFENSE-IN-DEPTH layer only — the authoritative rules live server-side;

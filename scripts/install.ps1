@@ -1,4 +1,4 @@
-# MizuMind Claude plugin — Windows installer (ISS-417 Track-1 secondary path).
+# MizuMind Claude plugin — Windows installer (secondary path to the marketplace).
 #
 # Wraps the official Claude Code CLI, same flow as scripts/install.sh:
 #   scripts\install.ps1                            # install from this clone

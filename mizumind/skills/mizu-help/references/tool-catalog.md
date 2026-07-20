@@ -1,7 +1,7 @@
 # MizuMind V1 wellness tool catalog
 
 Read on demand (progressive disclosure) — this is the full grouped catalog so it
-never sits in a description or a SKILL.md body (ISS-143 #3). It mirrors the V1
+never sits in a description or a SKILL.md body. It mirrors the V1
 wellness surface of the MizuMind connector (`mcp.neuroarts.ai/mcp`). Source of truth
 is the connector's live `tools/list` (surface=v1); regenerate from that, do not hand-
 edit drift. When in doubt about the live surface, call `list_wellness_tools`.

@@ -62,5 +62,5 @@ resolves it directly (CLI custom-marketplace add).
 Desktop, and Cowork on paid plans. Install path: **Settings → Plugins** (Customize
 section) → **Add → Add marketplace** (from a GitHub repository) → `neuroarts/claude-plugins`
 → **Install** MizuMind. The same Add menu accepts a direct plugin-file upload on
-Desktop/Cowork (uploaded copies don't auto-update). Directory listing (ISS-419) adds
+Desktop/Cowork (uploaded copies don't auto-update). A directory listing adds
 the curated **Browse** path on top of this.

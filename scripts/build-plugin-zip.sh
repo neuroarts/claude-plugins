@@ -8,7 +8,7 @@
 # https://mizumind.app/downloads/mizumind.plugin is a build artifact of it.
 #
 # Usage: scripts/build-plugin-zip.sh
-# Then: commit the updated zip in public-web and deploy per SO-019.
+# Then: commit the updated zip in public-web and deploy (approval-gated).
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -28,7 +28,7 @@ OUT="$STAGE/mizumind.plugin"
 if [ -d "$PUBLIC_WEB_DOWNLOADS" ]; then
   cp "$OUT" "$PUBLIC_WEB_DOWNLOADS/mizumind.plugin"
   echo "OK: staged $(du -h "$PUBLIC_WEB_DOWNLOADS/mizumind.plugin" | cut -f1) -> $PUBLIC_WEB_DOWNLOADS/mizumind.plugin"
-  echo "Next: commit in public-web + deploy per SO-019."
+  echo "Next: commit in public-web + deploy (approval-gated)."
 else
   cp "$OUT" "$REPO_ROOT/mizumind.plugin"
   echo "WARNING: public-web downloads dir not found at $PUBLIC_WEB_DOWNLOADS" >&2

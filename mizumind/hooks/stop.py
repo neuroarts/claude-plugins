@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Stop hook (ISS-416 #4) — persist a lightweight session summary.
+"""Stop hook — persist a lightweight session summary.
 
 On the assistant's final turn, append a one-line session marker to
 ${CLAUDE_PLUGIN_DATA}/sessions.log, using the Stop input's last_assistant_message

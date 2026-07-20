@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""PostToolUse hook (ISS-416 #3) — fire-and-forget local activity log.
+"""PostToolUse hook — fire-and-forget local activity log.
 
 Appends one compact line per MizuMind tool call to
 ${CLAUDE_PLUGIN_DATA}/activity.log (the persistent per-user data dir). Records
 WHICH tool ran + WHEN — never the full args or response (keeps the log light and
 avoids persisting anything sensitive). Best-effort: any error exits 0 so a logging
-failure can never affect the tool result (SO-003 — a dropped log line is fine, a
+failure can never affect the tool result (a dropped log line is fine, a
 broken tool is not). Richer server-side observability is the connector's usage
-telemetry (ISS-412), not this local file.
+telemetry, not this local file.
 """
 import datetime
 import json

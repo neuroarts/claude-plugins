@@ -10,7 +10,7 @@
 # canonical; the hosted zips are build artifacts and never hand-edited.
 #
 # Usage: scripts/build-skill-zips.sh
-# Then: commit the updated zips in public-web and deploy per SO-019.
+# Then: commit the updated zips in public-web and deploy (approval-gated).
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -34,4 +34,4 @@ for skill_path in "$SKILLS_DIR"/*/; do
 done
 
 [ "$built" -gt 0 ] || { echo "FATAL: zero skills built from $SKILLS_DIR" >&2; exit 1; }
-echo "Built $built skill zips. Next: commit in public-web + deploy per SO-019."
+echo "Built $built skill zips. Next: commit in public-web + deploy (approval-gated)."

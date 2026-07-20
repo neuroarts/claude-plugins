@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""UserPromptSubmit hook (ISS-416 #5) — inject FRESH time-sensitive wellness context.
+"""UserPromptSubmit hook — inject FRESH time-sensitive wellness context.
 
-Per the ISS-416 note, time-sensitive check-in context belongs on the per-prompt
+Time-sensitive check-in context belongs on the per-prompt
 path (it goes stale on --resume, so it must be recomputed each turn, not frozen at
 SessionStart). This hook can't reach the MCP connector (it's a plain script), so it
 injects the one time-sensitive fact it CAN compute locally: the current day-part.

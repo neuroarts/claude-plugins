@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SessionStart hook (ISS-416 #1) — deterministic once-per-session bootstrap.
+"""SessionStart hook — deterministic once-per-session bootstrap.
 
 Injects the MizuMind wellness playbook + the Usage-Policy AI disclosure as
 session context, so the user gets an oriented, honest MizuMind experience with
@@ -9,7 +9,7 @@ NO trigger phrase required (this is the deterministic rung above the probabilist
 Output contract: SessionStart hooks add context via
   {"hookSpecificOutput": {"hookEventName": "SessionStart", "additionalContext": "..."}}
 printed to stdout. Any failure exits 0 silently — a wellness plugin must never
-break a session with a hook error (fail-open, SO-003 for a non-critical path).
+break a session with a hook error (fail-open on a non-critical path).
 """
 import json
 import sys

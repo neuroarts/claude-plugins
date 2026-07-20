@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regression tests for the MizuMind plugin hooks (ISS-416 / ISS-144 evidence).
+"""Regression tests for the MizuMind plugin hooks.
 
 Dependency-free — run with `python3 tests/test_hooks.py` (no pytest needed, since the
 plugin ships no Python package setup). Covers two layers:
