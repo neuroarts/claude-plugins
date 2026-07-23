@@ -39,11 +39,16 @@ claude plugin marketplace add "${SOURCE}"
 echo "Installing the mizumind plugin…"
 claude plugin install mizumind@neuroarts
 
+echo "Enabling the mizumind plugin (required for its MCP connector to start)…"
+claude plugin enable mizumind 2>/dev/null || true
+
 cat <<'EOF'
 
-Installed. One more step, in Claude:
-  • Enabling the plugin prompts you to approve the MizuMind connector (OAuth).
-  • After you approve, the wellness tools are live. Run /mizumind:mizu-start for a
+Installed + enabled. In Claude:
+  • Run /reload-plugins (or restart Claude), then /mcp — you should see "mizumind".
+    Select it to approve the MizuMind connector (OAuth). If /mcp does NOT show it,
+    the plugin isn't enabled yet: run /plugin enable mizumind then /reload-plugins.
+  • Once approved, the wellness tools are live. Run /mizumind:mizu-start for a
     quick first-run orientation, or just say "I need a break" / "help me focus".
 
 If the plugin commands failed (older Claude Code), the connector-only path:

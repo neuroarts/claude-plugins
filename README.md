@@ -8,6 +8,12 @@ Claude Code / Claude Desktop:
 
     /plugin marketplace add neuroarts/claude-plugins
     /plugin install mizumind@neuroarts
+    /plugin enable mizumind
+    /reload-plugins
+
+Then run `/mcp` — you should see **mizumind**; select it to sign in. The plugin
+must be **enabled** for its bundled connector to start; if `/mcp` doesn't show it,
+run `/plugin enable mizumind` then `/reload-plugins`.
 
 On claude.ai (web), individual accounts add the connector directly instead:
 Settings -> Connectors -> add `https://mcp.neuroarts.ai/mcp`, then sign in
