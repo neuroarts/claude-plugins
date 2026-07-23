@@ -13,7 +13,7 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 BUNDLE_DIR="$REPO_ROOT/mizumind"
-PUBLIC_WEB_DOWNLOADS="${PUBLIC_WEB_DOWNLOADS:-$HOME/prj/neuroarts-inc/public-web/hosting/public/downloads}"
+PUBLIC_WEB_DOWNLOADS="${PUBLIC_WEB_DOWNLOADS:-$HOME/neuroarts/neuroarts-tech/public-web/hosting/public/downloads}"
 STAGE="$(mktemp -d)"
 trap 'rm -rf "$STAGE"' EXIT
 
