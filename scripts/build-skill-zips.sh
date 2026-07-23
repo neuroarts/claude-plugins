@@ -15,7 +15,7 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SKILLS_DIR="$REPO_ROOT/mizumind/skills"
-PUBLIC_WEB_SKILLS="${PUBLIC_WEB_SKILLS:-$HOME/prj/neuroarts-inc/public-web/hosting/public/downloads/skills}"
+PUBLIC_WEB_SKILLS="${PUBLIC_WEB_SKILLS:-$HOME/neuroarts/neuroarts-tech/public-web/hosting/public/downloads/skills}"
 STAGE="$(mktemp -d)"
 trap 'rm -rf "$STAGE"' EXIT
 
