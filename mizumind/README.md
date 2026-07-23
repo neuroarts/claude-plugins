@@ -8,16 +8,26 @@ a skill zip separately").
 ```
 /plugin marketplace add neuroarts/claude-plugins
 /plugin install mizumind@neuroarts
+/plugin enable mizumind
 /reload-plugins
 ```
-Then authenticate the MizuMind connector (Google OAuth) when prompted.
+Then run `/mcp` — you should see **mizumind** listed. Select it and authenticate
+the MizuMind connector (Google OAuth) when prompted.
+
+> **If `/mcp` does not show mizumind:** the plugin must be **enabled** for its
+> bundled MCP server to start. Run `/plugin enable mizumind` then `/reload-plugins`
+> (or restart Claude Code) and check `/mcp` again. A plugin can be installed but
+> not enabled — in that state its connector is present but inactive.
 
 The marketplace lives at the ROOT of the public `github.com/neuroarts/claude-plugins` repo
 (`.claude-plugin/marketplace.json`, marketplace name `neuroarts`); the plugin is `mizumind`.
 
 ## What it bundles
-- **Connector** (`.mcp.json`): the MizuMind wellness MCP at `https://mcp.neuroarts.ai/mcp`
-  (streamable HTTP). Tools act on behalf of the signed-in MizuMind identity.
+- **Connector** (declared inline in `plugin.json` as `mcpServers`): the MizuMind
+  wellness MCP at `https://mcp.neuroarts.ai/mcp` (streamable HTTP). Tools act on
+  behalf of the signed-in MizuMind identity. (Declared inline rather than via a
+  separate `.mcp.json` file — the string-path form does not reliably resolve for
+  marketplace-installed plugins; ISS-478.)
 - **Skills** (`skills/`) — five coaching skills, each trigger-activated in conversation:
   - **mizu-start** — greet / onboard a member ("hello mizu", "get started").
   - **mizu-focus** — guide a live breathing or focus session ("help me focus", "quick reset", "I'm wired", "can't sleep").
