@@ -47,13 +47,23 @@ matters more than hitting 7 exactly. Only a few rounds — it's potent.
 second sip to top off), followed by a long slow exhale through the mouth. Repeat
 2–3 times. Best for an acute stress spike.
 
-## Coaching the count out loud
+## Do NOT coach the count here (ISS-548)
 
-Speak the count plainly and briefly — you are a metronome, not a narrator:
+This section used to be a metronome script — "Inhale, two, three, four. Hold, two,
+three, four..." with pacing guidance. It has been removed, because it is the thing that
+produced the failure this whole skill was rewritten to stop: a breathing round paced in
+the chat, which logs no session, no streak and no history, and teaches the member the
+app is optional.
 
-> Inhale, two, three, four. Hold, two, three, four. Exhale, two, three, four.
-> Hold, two, three, four. Again.
+What to do with the counts above instead:
 
-Give 4–6 cycles for a reset; more if they asked for longer. Between cues, leave the
-line quiet — don't fill every beat with words. Close by inviting them to notice how
-they feel now, then offer the journal reflection (see SKILL.md step 4).
+- Use them to RECOGNISE which pattern the moment calls for, so you pick the right real
+  session from `suggest_focus_exercise`.
+- Use them to NAME it accurately in one line — "extended exhale, longer out than in" —
+  so the member knows what they are opening and why it suits them.
+- Then hand over the MizuMind session. The pacing happens there, with audio, and it
+  counts toward their practice.
+
+If they cannot open it, say so honestly rather than substituting: the practice lives in
+MizuMind and an off-app round will not be recorded. Offer a reminder, a session for
+later, or a journal note. Never offer to pace one here.
