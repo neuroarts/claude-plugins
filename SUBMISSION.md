@@ -245,13 +245,13 @@ second kind.
 
 Best practice we researched previously: roughly 15-20 tools, ~4 sentences each.
 
-**A zero-grant reviewer now sees 21 tools, all wellness:**
+**A zero-grant reviewer now sees 20 tools, all wellness:**
 
 ```
 checkin_status, create_feature_request, create_journal_entry, dismiss_checkin,
 get_checkin_preference, get_checkin_suggestion, get_journal_entry,
 get_practice_progress, get_user_profile, list_journal_entries, list_videos,
-list_wellness_tools, log_practice_session, mizu_focus_cockpit, mizu_practice_card,
+list_wellness_tools, log_practice_session, mizu_practice_card,
 recommend_video, set_checkin_preference, set_practice_goal, suggest_focus_exercise,
 update_user_preference, whoami
 ```
@@ -259,9 +259,10 @@ update_user_preference, whoami
 An allowlisted operator with ops+storydrop still sees all 30 — nothing was removed from
 the product, only from the public catalogue.
 
-21 is one over the 20 target and that is fine: tool COUNT is not a documented rejection
-cause, tool DESIGN is. If you want 20 exactly, fold the check-in preference pair
-(`get_checkin_preference` / `set_checkin_preference`) into one.
+20 lands exactly on the researched target. It was 21 until `mizu_focus_cockpit` was
+gated out as business-scoped (ISS-554, see §10) — that removal was made because the
+cockpit renders only StoryDrop and ops data, not to hit a number. Tool COUNT is not a
+documented rejection cause in any case; tool DESIGN is.
 
 ## 8. The endpoint is not what the repo said it was
 
@@ -334,7 +335,7 @@ against a real member account; that is what the reviewer test tenant is for.
 
 ### Not verifiable from here
 
-The **21-tool zero-grant view** is unit-tested and mutation-verified, but cannot be
+The **20-tool zero-grant view** is unit-tested and mutation-verified, but cannot be
 confirmed live from this session: the signed-in identity carries `ops` and `storydrop`
 grants and therefore sees all 30. Confirming it live needs the reviewer test account —
 worth doing before submitting, since it is the exact view a reviewer gets.
@@ -350,7 +351,7 @@ found two reasons, one of them serious.
 
 ### The CRM card must not be in the carousel
 
-`mizu_crm_card` **is not in the reviewer's 21-tool view.** Verified: it requires a
+`mizu_crm_card` **is not in the reviewer's 20-tool view.** Verified: it requires a
 StoryDrop grant plus StoryDrop backend config, so a no-grant reviewer never sees the tool
 at all. A carousel image of a card a reviewer cannot reach invites the obvious question,
 and the listing would be advertising a surface the listing does not grant.
@@ -361,24 +362,42 @@ carousel is a public asset. Discard any CRM capture already taken; do not crop a
 
 ### Shoot from the REVIEWER TENANT, not an operator account
 
-The Today cockpit renders **StoryDrop and ops-backlog business data when the caller holds
-operator grants**. A cockpit shot taken from Bootstrap's identity therefore shows content a
-reviewer will never see — a carousel that misrepresents the product to the person checking
-whether the carousel represents the product.
+Sign in as `mizumind-reviewer@neuroarts.ai` (no grants) and capture from there, so the
+images match exactly what a reviewer gets. A shot taken from Bootstrap's identity shows
+content a reviewer never sees — a carousel that misrepresents the product to the person
+checking whether the carousel represents the product.
 
-So: sign in as `mizumind-reviewer@neuroarts.ai` (no grants) and capture from there. That
-single change fixes both problems at once — no business data, no unreachable cards, and
-the images match exactly what a reviewer gets.
+### The Today cockpit is OUT — of the carousel and of v1 (ISS-554, 2026-07-27)
 
-### The set, given only two reviewer-visible cards
+An earlier version of this section planned image 3 as "Today cockpit — wellness-only
+state, as a reviewer sees it." **There is no such state.** The cockpit has exactly two
+data sections, a StoryDrop cohort pulse (`list_cohorts`) and an open ops-issue count
+(`list_issues`), and no wellness content whatsoever. For a no-grant reviewer both of
+those tools are gated, so every section renders an error card.
 
-Reviewer-visible ui:// resources are `mizu_practice_card` and `mizu_focus_cockpit`. The
-spec wants 3–5 images, and nothing requires each to be a different card:
+Under `MIZU_SURFACE=v1` it was worse: the business tools are not registered at all, so
+the cockpit could only ever have rendered two errors on the very surface a reviewer
+connects to — and `iss-114-v1-surface.test.ts` pinned it as a correct member of that
+surface, which is why nobody noticed.
+
+Its description also read, to every reviewer opening tools/list: "surfaces a StoryDrop
+cohort pulse and the open ops-issue count." A wellness connector advertising a CRM
+pulse and an ops tracker invites precisely the question we do not want asked.
+
+`mizu_focus_cockpit` is now gated on `ops || storydrop` alongside the tools it calls.
+Operators keep it unchanged; the consumer catalogue drops from 21 tools to 20. Pinned by
+`iss-552-v1-consumer-surface-exact.test.ts`.
+
+### The set, given ONE reviewer-visible card
+
+The only reviewer-visible ui:// resource is now `mizu_practice_card`. The spec wants 3–5
+images and nothing requires each to be a different card, so lead with the card and fill
+out with real tool responses:
 
 1. Practice card — morning/daytime suggestion
 2. Practice card — evening/wind-down suggestion (different day-part, different sessions)
-3. Today cockpit — wellness-only state, as a reviewer sees it
-4. *(optional)* `list_wellness_tools` catalogue response — a real app response, no card
+3. `list_wellness_tools` catalogue response — a real app response, no card
+4. *(optional)* `get_practice_progress` — streak + resume line, real data
 5. *(optional)* a journal read-back
 
 Same spec as before: PNG, ≥1000px wide, cropped to the app response with no prompt
