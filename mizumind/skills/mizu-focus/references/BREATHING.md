@@ -1,7 +1,16 @@
-# Breathing techniques — reference for the mizu coaching skill
+# Breathing techniques — reference for CHOOSING a MizuMind session
 
-Load this when starting a guided session. Use the exact counts below; do not
-invent variations. These are widely-taught patterns, not medical prescriptions —
+Load this to work out WHICH pattern the member's moment calls for, so you can pick
+the right real session from `suggest_focus_exercise`. It is a lookup table, NOT a
+script to read out.
+
+**Do not count a round out in the chat** (ISS-548). The practice runs in MizuMind,
+where it logs to the member's streak and history; a round paced here logs nothing and
+teaches them the app is optional. Use the mapping below to identify the technique, then
+hand over the real session.
+
+The counts are here so you can recognise and name a pattern accurately ("extended
+exhale — longer out than in"), not so you can pace one. Do not invent variations. These are widely-taught patterns, not medical prescriptions —
 this is a wellness practice, not care. General cautions: if the member is pregnant,
 has a respiratory or cardiovascular condition, or feels dizzy, keep breaths gentle
 and unforced, shorten holds, and tell them to stop and breathe normally if

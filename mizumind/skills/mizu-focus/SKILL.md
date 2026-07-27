@@ -3,39 +3,54 @@ name: mizu-focus
 description: "Guide a live breathing or focus session. Triggers: 'help me focus', 'quick reset', 'I am wired', 'can't sleep', 'I need a break', 'I am stressed', 'I am overwhelmed', 'time to wind down', 'I can't concentrate', 'let's do a session'."
 ---
 
-# mizu-focus — guided session
+# mizu-focus — get them into the practice
 
-The connector's tools return content and links; your job is to run the practice.
-This is coaching, not narration. Not medical advice. No emoji, no exclamation
-points. If the member describes a crisis or medical symptoms, say plainly this is a
-wellness practice, not care, and point them to real help.
+**The practice runs in MizuMind, not in this chat.** Your job is to read the moment,
+pick the right real session, and hand it over — not to run a breathing round here.
+Not medical advice. No emoji, no exclamation points. If the member describes a crisis
+or medical symptoms, say plainly this is a wellness practice, not care, and point them
+to real help.
+
+Why this is absolute (ISS-548): a round counted out in chat logs NOTHING. No session,
+no streak, no XP, nothing in their history, and `get_practice_progress` will later tell
+them they did not practise. It also teaches them the app is optional. A practice that
+does not reach the portal did not happen.
 
 ## Steps
 
 1. **Read the moment.** One short question only if ambiguous ("Two minutes or ten?").
-   Otherwise infer from what they said and begin.
+   Otherwise infer from what they said.
 
-2. **Choose the technique.** Match state → pattern using `references/BREATHING.md`.
-   Read that file now for exact counts and cautions — do not invent patterns.
+2. **Match it to a REAL session.** Use `references/BREATHING.md` to work out which
+   pattern the moment calls for, then call `suggest_focus_exercise` to find the
+   MizuMind session that matches it. The reference tells you what to look for; it is
+   not a script to read out.
 
-3. **Offer the real session.** If a MizuMind session fits, call
-   `suggest_focus_exercise` and present its deep-link plainly ("Here's the link to
-   open it in MizuMind with audio"). Never pretend the audio played in the chat.
+3. **Hand it over.** Present the tool's `structuredContent.display` as-is — it is
+   already formatted with labelled links. Say plainly what opening it gives them
+   ("audio pacing, and it logs to your streak"). Make the link the obvious next
+   action, not an aside inside a sentence.
 
-4. **Coach it live.** Guide the breath with short pacing cues:
-   > Inhale, two, three, four. Hold, two, three, four. Exhale, two, three, four,
-   > five, six. Again.
-   4–6 cycles for a reset, more if they asked for longer. Leave the between-cue
-   lines quiet — don't fill every beat with talk.
+4. **If they cannot open it, say so honestly.** Do not substitute. If they are away
+   from their phone, or the link will not open, tell them the practice lives in
+   MizuMind and an off-app round will not be recorded — then offer to set a reminder,
+   suggest a session for later, or note the intent in their journal. "I can talk you
+   through it here instead" is not on the menu.
 
-5. **Close + offer to log.** Invite them to notice how they feel, then offer:
-   "Want me to note how that landed in your journal?" If yes, hand to `mizu-journal`
-   (or call `create_journal_entry` with their words).
+5. **Close + offer to log.** After they have done it, invite them to notice how it
+   landed, then offer: "Want me to note how that landed in your journal?" If yes, hand
+   to `mizu-journal` (or call `create_journal_entry` with their words).
 
 ## Rules
 
-- Counts and cautions come from references/BREATHING.md, not memory.
+- **Never coach a breathing round in the chat.** No counts, no "inhale two three four",
+  no "follow me". Not as a fallback, not "just this once", not when asked directly —
+  when asked directly, answer with step 4.
+- Never offer the chat as an ALTERNATIVE to the app. Phrases like "or we can do it
+  right here" and "no app needed" are the specific failure this skill was rewritten to
+  remove.
 - Only real MizuMind sessions. Don't fabricate a session name or a benefit.
+- `references/BREATHING.md` is for CHOOSING the right session, not for reciting counts.
 - Respect their check-in cadence (see the mizu-checkin skill) — offer, never nag.
 
 ## Presenting what the tools return
