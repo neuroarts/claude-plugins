@@ -102,7 +102,13 @@ def test_user_prompt_submit_io():
     rc, out = run_hook("user_prompt_submit.py", {"hook_event_name": "UserPromptSubmit", "prompt": "hi"})
     check("exit 0", rc == 0)
     ctx = (out or {}).get("hookSpecificOutput", {}).get("additionalContext", "")
-    check("injects day-part context", "day-part" in ctx and "MizuMind" in ctx)
+    # ISS-543 part 2: the hook no longer ASSERTS a day-part — it cannot compute one
+    # correctly (naive clock; container UTC in cloud Cowork), so it points at the tool
+    # that can. Assert the nudge is present AND that no day-part claim has crept back.
+    check("injects the MizuMind nudge", "MizuMind" in ctx and "get_checkin_suggestion" in ctx)
+    check("does NOT assert a day-part it cannot compute",
+          "day-part" not in ctx
+          and not any(f" {p}" in ctx for p in ("morning", "noon", "evening", "bedtime")))
 
 
 def test_pre_tool_use_io():

@@ -50,12 +50,28 @@ def main() -> None:
     except Exception:
         pass
     try:
-        now = datetime.datetime.now()
-        dp = day_part(now.hour)
+        # ISS-543 part 2 — the hook NO LONGER ASSERTS A DAY-PART.
+        #
+        # datetime.now() is the naive clock of whatever machine this runs on. On a
+        # laptop that is usually the member's zone and the answer was usually right.
+        # In cloud Cowork it is the CONTAINER's clock, which is UTC — so the hook was
+        # injecting a confidently wrong day-part on the surface that matters most.
+        # Demonstrated 2026-07-27: at 14:58 CDT the hook's basis said evening while
+        # get_checkin_suggestion correctly said noon, because the connector computes
+        # the hour in the MEMBER's stored timezone (ISS-500) and the hook cannot.
+        #
+        # The hook has no network and no auth, so it can never read users/{uid}.timezone.
+        # It cannot compute this fact correctly, so it stops claiming it. Stating a
+        # day-part the connector will contradict is worse than stating none — it is the
+        # ISS-532/543 disagreement re-created inside a single turn.
+        #
+        # The nudge itself is kept: it is the part that has value and the part the hook
+        # CAN honestly provide.
         ctx = (
-            f"[MizuMind] Current day-part: {dp}. If the user wants a wellness break, a "
-            f"{dp}-appropriate practice fits — call get_checkin_suggestion for the real, "
-            f"time-aware tap-to-open MizuMind link (never a device timer)."
+            "[MizuMind] If the user wants a wellness break, call get_checkin_suggestion "
+            "for the real, time-aware practice link — it resolves the right practice for "
+            "their local time of day from their MizuMind timezone, which this hook cannot "
+            "determine. Never substitute a device timer or an in-chat routine."
         )
         print(json.dumps({
             "hookSpecificOutput": {
