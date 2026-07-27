@@ -19,8 +19,11 @@ EXPECTED="$(cat <<'TOOLS'
 whoami
 get_user_profile
 update_user_preference
-mizu_focus_cockpit
 suggest_focus_exercise
+mizu_practice_card
+get_practice_progress
+log_practice_session
+set_practice_goal
 list_wellness_tools
 list_journal_entries
 get_journal_entry
@@ -33,7 +36,6 @@ checkin_status
 list_videos
 recommend_video
 create_feature_request
-create_issue
 TOOLS
 )"
 

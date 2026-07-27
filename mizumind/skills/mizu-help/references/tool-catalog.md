@@ -12,8 +12,13 @@ guides, and hands over the link.
 
 ## Focus and breathing
 - **Get a session for right now** — `suggest_focus_exercise`. *Try:* "Suggest a focus exercise for deep work." (mizu-focus then guides it live.)
-- **Today's focus view** — `mizu_focus_cockpit`. *Try:* "Show me my focus for today."
 - **Full catalog** — `list_wellness_tools`. *Try:* "Show me everything MizuMind can do."
+
+## Your practice
+- **How am I doing** — `get_practice_progress`. *Try:* "How's my practice going?" Real streak, current program day, in-progress flows, and your active goal.
+- **Log a session done off-app** — `log_practice_session`. *Try:* "Log 10 minutes of breathing after training."
+- **Set an intention** — `set_practice_goal`. *Try:* "Set my goal: breathe before every shift, 150 minutes a week." Progress shows up in `get_practice_progress`.
+- **Tap-to-start card** — `mizu_practice_card`. *Try:* "Show me my practice card."
 
 ## Journal
 - **Read recent entries** — `list_journal_entries` / `get_journal_entry`. *Try:* "Show my recent journal entries." Your journal is yours; nothing is scored or shared.
@@ -29,4 +34,4 @@ guides, and hands over the link.
 - **Profile + cadence** — `whoami` / `get_user_profile` / `update_user_preference`. *Try:* "Change my check-in cadence to every 60 minutes."
 
 ## Feedback
-- **Send feedback / request a feature** — `create_feature_request` / `create_issue`. *Try:* "File a feature request: add a 3-minute reset."
+- **Send feedback / request a feature** — `create_feature_request`. *Try:* "File a feature request: add a 3-minute reset."
