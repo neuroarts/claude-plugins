@@ -38,9 +38,14 @@ construction and is not consumable by those surfaces.
 ```
 repo   github.com/neuroarts/claude-plugins
 ref    v1.1.5
-sha    7342d19
+sha    (resolve from the tag: `git rev-list -n1 v1.1.5`)
 slug   mizumind
 ```
+
+The sha is deliberately NOT written out here. A commit that records its own sha is
+impossible — writing the number changes HEAD, and I chased that around three commits
+before noticing. The TAG is the pin; resolve the sha from it at submission time. That is
+also what the plugin form wants: it pins ref + sha, and the ref is the stable half.
 
 **Updated 2026-07-27 (was v1.1.3 / 6b9e369).** v1.1.3 predates two behavioural fixes,
 both for defects observed live in cloud Cowork: ISS-548 (the mizu-focus skill instructed
