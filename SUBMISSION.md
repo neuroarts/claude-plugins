@@ -153,7 +153,7 @@ automatically; verified escalation is Anthropic's call and is not requested.
 | 401 discovery contract + WWW-Authenticate | PASS — the #1 rejection cause, verified |
 | Streamable HTTP over HTTPS, POST /mcp | PASS |
 | Reachable from Anthropic cloud egress | PASS — this connector works in claude.ai today |
-| Tool annotations (`title` + read/destructive hint) | PASS — 23/23 on v1, 30/30 on full |
+| Tool annotations (`title` + read/destructive hint) | PASS — 30/30, every tool on every surface |
 | Tool names ≤ 64 chars | PASS |
 | Privacy policy live, covers the connector | PASS — section 7, "Last Updated: July 2026" |
 | Public documentation URL | PASS — live, 3 steps + 4 sample prompts |
@@ -163,13 +163,13 @@ automatically; verified escalation is Anthropic's call and is not requested.
 | Origin-header validation | fixed in source, **NOT DEPLOYED** |
 | MCP Inspector run against the server | **NOT DONE** |
 | MCP Apps carousel screenshots | **MISSING — blocker** |
-| Separate read and write tools | **AT RISK — see §5** |
+| Separate read and write tools | PASS — the catch-all is no longer reviewer-visible (§5a) |
 
 ---
 
-## 5. The two things that can get us rejected
+## 5. The two things that could have got us rejected
 
-### 5a. `mizu` is a catch-all command tool — HIGH RISK
+### 5a. `mizu` is a catch-all command tool — FIXED 2026-07-27
 
 Review criteria, verbatim:
 
@@ -184,9 +184,22 @@ READS and WRITES" and sets `readOnlyHint: false, destructiveHint: false` — whi
 the "documented within one description" pattern the criterion rejects. It is present on
 **both** the v1 and full surfaces.
 
-**Recommendation: drop `mizu` from the submitted surface.** Everything a member needs is
-already covered by the purpose-built tools; `mizu` is an operator convenience. That also
-takes v1 from 23 tools to 22.
+**FIXED** (neuroarts-tech 1b0ff976, 4800d09a). `mizu` now requires a business grant
+(ops or storydrop), so it is absent from a reviewer's tools/list.
+
+The first attempt gated it on `MIZU_SURFACE=v1` and did nothing, because **production
+does not set that flag** — see §8. The working fix gates on the token's product claim,
+which holds regardless of surface.
+
+Three more tools were pulled from the reviewer's view in the same pass:
+- `create_issue` — a wellness listing should not offer "File an ops-backlog issue", and
+  a reviewer's functional test would have written a real row into the live tracker.
+  `create_feature_request` KEEPS its carve-out; that one is genuine member feedback.
+- `update_issue` / `omoikane_write` — already claim-gated, confirmed hidden.
+- `deploy` — was in tools/list for **every** signed-in identity, titled "Deploy a prod
+  box service". Execution was always allowlisted and denied pre-action, so nothing was
+  exploitable, but a public catalogue must not advertise infrastructure control. Now
+  visible only to uids on `DEPLOY_OPERATOR_UIDS`, fail-closed when unset.
 
 ### 5b. Prescriptive tool descriptions — MEDIUM RISK
 
@@ -220,13 +233,41 @@ second kind.
 
 ---
 
-## 7. Tool-count note
+## 7. Tool count — what a reviewer actually sees
 
-Best practice we researched previously: roughly 15–20 tools, ~4 sentences of description each.
+Best practice we researched previously: roughly 15-20 tools, ~4 sentences each.
 
-Actual today: **v1 = 23 tools, full = 30.** Dropping `mizu` (§5a) puts v1 at 22. Getting to
-20 would mean folding two more — the check-in preference pair (`get_checkin_preference` /
-`set_checkin_preference`) and the profile pair (`get_user_profile` /
-`update_user_preference`) are the obvious candidates, but neither is required for review and
-both are cheap to leave. Tool *count* is not itself a documented rejection cause; tool
-*design* (§5a) is.
+**A zero-grant reviewer now sees 21 tools, all wellness:**
+
+```
+checkin_status, create_feature_request, create_journal_entry, dismiss_checkin,
+get_checkin_preference, get_checkin_suggestion, get_journal_entry,
+get_practice_progress, get_user_profile, list_journal_entries, list_videos,
+list_wellness_tools, log_practice_session, mizu_focus_cockpit, mizu_practice_card,
+recommend_video, set_checkin_preference, set_practice_goal, suggest_focus_exercise,
+update_user_preference, whoami
+```
+
+An allowlisted operator with ops+storydrop still sees all 30 — nothing was removed from
+the product, only from the public catalogue.
+
+21 is one over the 20 target and that is fine: tool COUNT is not a documented rejection
+cause, tool DESIGN is. If you want 20 exactly, fold the check-in preference pair
+(`get_checkin_preference` / `set_checkin_preference`) into one.
+
+## 8. The endpoint is not what the repo said it was
+
+Worth its own section, because it invalidated an earlier fix and a prior dossier.
+
+`mcp.neuroarts.ai/mcp` does **not** serve a wellness-only surface. Verified on the box:
+`/opt/connector/run-mcp.sh` carries `# MIZU_SURFACE removed 2026-07-09 (Bootstrap: SINGLE
+user-gated endpoint on the clean URL; v1 split retired)`, and Caddy maps
+`mcp.neuroarts.ai -> 127.0.0.1:4100 -> that script`. Unset ⇒ the FULL surface.
+
+The repo's `deploy/run-mcp.sh` still exported `MIZU_SURFACE=v1` and the deploy README's
+topology table still called port 4100 "V1 wellness-only". Both are corrected as of
+2026-07-27. Naming trap worth remembering: the host *called* `mcp-v1...` is the BUSINESS
+surface, not v1.
+
+Practical consequence: **all gating that matters is per-identity**, not per-endpoint. That
+is why the fixes in §5a are written against product claims and the deploy allowlist.
