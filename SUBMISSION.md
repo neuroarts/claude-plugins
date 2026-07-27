@@ -84,12 +84,12 @@ the MCP server unregistered**. Submitting it would ship a plugin that does not w
 MizuMind
 ```
 
-### Tagline (≤55) — 43 chars
+### Tagline (≤55) — 42 chars
 ```
 Breathing, focus, and journaling in Claude
 ```
 
-### Description (≤2000) — 1,143 chars
+### Description (≤2000) — 1,204 chars
 ```
 MizuMind brings a real practice into Claude. Ask for a breathing session, a focus
 reset before deep work, or a wind-down at the end of the day, and Claude hands you a
@@ -114,6 +114,11 @@ requests you make, and you can disconnect at any time.
 MizuMind is a wellness practice, not medical care, therapy, diagnosis, or crisis
 support.
 ```
+
+_Counts verified programmatically 2026-07-27. Both had drifted — the tagline read 43 and
+the description 1,143, because the copy was edited after the counts were written. Neither
+was ever near its limit, so nothing was at risk; but a character count exists to prove the
+field fits, and a count nobody re-runs is decoration. Re-measure after any copy edit._
 
 ### Categories (1–5, in order of fit)
 ```
