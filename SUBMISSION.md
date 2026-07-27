@@ -175,6 +175,9 @@ automatically; verified escalation is Anthropic's call and is not requested.
 | MCP Inspector run against the server | PARTIAL — connects, 401 contract verified; tool exercise needs an interactive OAuth token (§9) |
 | MCP Apps carousel screenshots | **MISSING — blocker** |
 | Separate read and write tools | PASS — the catch-all is no longer reviewer-visible (§5a) |
+| Descriptions describe, do not instruct | PASS as of 5af49a69 — **was failing on 10 of 20**, see §5c |
+| Consumer surface contains no v2/StoryDrop tools | PASS — exact-set pinned, see §5c |
+| Card tap targets ≥ 44px | PASS as of a866eec9 — two of three were 16px/28px, see §5c |
 
 ---
 
@@ -228,6 +231,61 @@ tools".
 "Returns a pre-rendered markdown summary in `structuredContent.display`" describes the tool;
 "NEVER print a raw URL" instructs the model. The plugin's skills are the right home for the
 second kind.
+
+---
+
+## 5c. Found after the v1 refocus — 2026-07-27
+
+Bootstrap: *"stay focused on the v1 consumer edition, not the v2 internals — nothing in
+v1 should involve storydrop."* Auditing against that sentence rather than against the
+code found four things the earlier passes had not.
+
+### The Today cockpit was in the consumer catalogue and had no wellness in it (ISS-554)
+
+`mizu_focus_cockpit` registered unconditionally. Its only two sections are a StoryDrop
+cohort pulse (`list_cohorts`) and an open ops-issue count (`list_issues`) — no wellness
+content at all — and both feeding tools are gated, so for a reviewer every section
+rendered an error card. Under `MIZU_SURFACE=v1` the business tools are not registered at
+all, so on the exact surface a reviewer connects to it could only ever have shown two
+errors. `iss-114-v1-surface.test.ts` had it pinned as a correct member of that surface.
+
+Its description also read: *"surfaces a StoryDrop cohort pulse and the open ops-issue
+count"* — in the catalogue a reviewer opens first.
+
+Now gated on `ops || storydrop`. Consumer surface 21 → 20 tools.
+
+### 10 of 20 descriptions told Claude how to behave (ISS-556)
+
+Against the criterion *"Describe what the tool does. Do not tell Claude how to behave."*
+The recurring shape was *"Do NOT invent an exercise yourself: always call this tool
+so..."*; the live build still says *"output structuredContent.display VERBATIM ... Raw
+links are a fail."*
+
+Safe to remove because it was misplaced, not wrong: all of it already lives in
+`SERVER_INSTRUCTIONS` and again in the mizu-focus skill. A third copy, in the one place
+the criteria reject it. Rewrote 8; deliberately left `get_practice_progress` and
+`dismiss_checkin`, which describe the tool rather than the model.
+
+### The practice card's tap targets missed the mobile floor (ISS-555)
+
+Now the only reviewer-visible card. `.resume` was ~16px and the alternate pills ~28px
+against a 44px iOS/Material floor; `.start` passed only because 13px padding and a 15px
+font happened to sum to 44. All three pinned explicitly, guarded against the *generated*
+bundle rather than the shell it is built from.
+
+### The consumer surface is now pinned as an EXACT set (ISS-552)
+
+`iss-119` asserts the business tools are absent, from a hand-maintained list — which
+cannot fail for a tool nobody added to it. Demonstrated: registering an ungated
+`list_storydrop_partners` fails the new test twice while `iss-119` passes all four.
+`tools/list` for a zero-product identity must now EQUAL the 20 named tools.
+
+### What these four have in common
+
+Every one was guarded by something that read a *copy* or a *list*, not the thing itself
+— a test naming what must be absent, a description nobody asserted on, a CSS shell
+rather than the shipped bundle. Same shape as ISS-545 earlier in the day, where four
+green guards all read git while production sat eleven commits stale.
 
 ---
 
