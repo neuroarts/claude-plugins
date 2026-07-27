@@ -37,8 +37,8 @@ construction and is not consumable by those surfaces.
 
 ```
 repo   github.com/neuroarts/claude-plugins
-ref    v1.1.5
-sha    (resolve from the tag: `git rev-list -n1 v1.1.5`)
+ref    v1.1.6
+sha    (resolve from the tag: `git rev-list -n1 v1.1.6`)
 slug   mizumind
 ```
 
