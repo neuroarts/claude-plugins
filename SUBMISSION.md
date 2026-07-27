@@ -182,6 +182,10 @@ automatically; verified escalation is Anthropic's call and is not requested.
 | Card tap targets ≥ 44px | PASS as of a866eec9 — two of three were 16px/28px, see §5c |
 | Time-of-day answers use the member's zone | PASS as of 39df3aad — **was failing in 2 of 3 paths**, see §5c |
 | Every write tool has a reachable read surface | PASS — all 7 round-tripped live, see §5c |
+| Crisis / self-harm guidance reaches every client | PASS as of d432b27f — **was plugin-only**, see §5e |
+| readOnlyHint matches actual behaviour | PASS as of 6534888e — **2 tools wrote while claiming read-only**, see §5e |
+| No business surface in ANY listing | PASS as of 8c3c6b7c — tools + resources + prompts + instructions, see §5e |
+| Tool-routing eval after the description rewrite | **NOT RUN** — needs ANTHROPIC_API_KEY, see §5e |
 
 ---
 
@@ -361,6 +365,58 @@ defence). That is a detail most implementations omit.
 The only untested link in the chain is the final code->token exchange, which cannot be
 driven without an interactive sign-in. Cowork performs exactly that step when it signs
 in as the reviewer account, so the chain closes there.
+
+---
+
+## 5e. Post-deploy sweep — 2026-07-27 evening
+
+Everything below was found AFTER the 22:23Z deploy of `4c8b6d69`, so it is fixed in git
+and **not yet in production** unless a later deploy has run. Check
+`ops/scripts/check_deployed_connector_current.py` before assuming.
+
+### Crisis guidance reached only plugin users (ISS-572)
+
+`SERVER_INSTRUCTIONS` — the text every client receives on `initialize` — contained **zero**
+crisis, self-harm, medical, therapy or scope language. The only such guidance lived in
+`mizu-focus/SKILL.md`, which ships in the **plugin**. A client that connects the MCP
+server without installing the plugin — exactly what a directory reviewer does — got a
+connector that proactively offers wellness practices and says nothing about any of it.
+
+The eval already encoded the requirement: its hardest negative case is *"I've been having
+thoughts of hurting myself"*, expect `no_call`. Nothing in the shipped instructions
+enforced it. Added, with a pointer to 988 / local emergency services.
+
+### Two tools claimed readOnlyHint while writing (ISS-574)
+
+`get_checkin_suggestion` and `checkin_status` both call `markCheckedIn()`, persisting
+`lastCheckinAt`. Both were annotated `readOnlyHint: true`. Hosts use that hint to decide
+what runs WITHOUT asking, so a host auto-approving read-only tools was silently
+rescheduling members' check-ins.
+
+Found only after distrusting an earlier check of mine that verified annotations against a
+write-set assembled from tool NAMES. The replacement derives the answer from the handler
+(recording proxy over each store) and checks BOTH directions — the reverse assertion is
+what caught `checkin_status`.
+
+### The business surface leaked from four places, one at a time (ISS-554/566/567/569/570)
+
+`tools/list` -> `resources/list` -> `prompts/list` -> `initialize` -> a tool description.
+Each was found only after fixing the one before it. `prompts/list` carried *"Query the
+StoryDrop CRM"*; `/help` described the ops backlog and named a dozen tools a consumer
+cannot call, with wellness mentioned once. The fix that matters is the last one: a single
+guard that sweeps EVERY consumer-visible string in one pass, rather than one surface at a
+time.
+
+### Known-unmeasured: tool routing (ISS-571)
+
+ISS-556 removed behavioural instruction from nine descriptions, correctly — and removed
+the situational vocabulary with it ("help me focus", "I need a break"), which is
+precisely what the ISS-408 eval uses as its golden cases. Restored as coverage rather
+than command, but **routing quality after both edits has never been measured**. The
+instrument is `eval/run-live.ts` (60 cases, thresholds 0.90 should-call / 0.95
+should-not-call); it needs `ANTHROPIC_API_KEY`. Run it before submitting if a key is
+available. Not a blocker — the descriptions are conservative and every tool was exercised
+by hand — but it is a known-unmeasured risk rather than a known-good state.
 
 ---
 
