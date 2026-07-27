@@ -187,7 +187,7 @@ automatically; verified escalation is Anthropic's call and is not requested.
 | Reachable from Anthropic cloud egress | PASS — this connector works in claude.ai today |
 | Tool annotations (`title` + read/destructive hint) | PASS — 30/30, every tool on every surface |
 | Tool names ≤ 64 chars | PASS |
-| Privacy policy live, covers the connector | PASS — section 7, "Last Updated: July 2026" |
+| Privacy policy live, covers the connector | PASS — **content read and verified** 2026-07-27, see §5f |
 | Public documentation URL | PASS — live, 3 steps + 4 sample prompts |
 | Support contact | PASS |
 | Reviewer test account | reported done (mizumind-reviewer@) — **not re-verified by me** |
@@ -438,6 +438,37 @@ instrument is `eval/run-live.ts` (60 cases, thresholds 0.90 should-call / 0.95
 should-not-call); it needs `ANTHROPIC_API_KEY`. Run it before submitting if a key is
 available. Not a blocker — the descriptions are conservative and every tool was exercised
 by hand — but it is a known-unmeasured risk rather than a known-good state.
+
+---
+
+## 5f. Privacy policy — read, not just reachable (2026-07-27)
+
+Previously the ledger recorded this as PASS on the basis of a 200 and a section number.
+Fetched and read the actual text. Section 7, "MizuMind in Claude (Connector and Plugin)",
+covers everything a reviewer looks for:
+
+  - the endpoint by name (mcp.neuroarts.ai) and the plugin
+  - OAuth with the exact scopes requested — openid, profile, email, offline_access,
+    which matches what auth.neuroarts.ai's metadata actually advertises (§5d)
+  - what the connector does on the member's behalf, scoped to their own account
+  - journal note content encrypted at rest, stored as ciphertext
+  - local plugin data: tool names and timestamps only, never arguments, responses or
+    journal content; never leaves the device
+  - what is shared with Anthropic, and only to fulfil requests made in a session
+  - "Removing or disabling the connector or plugin ends its access at any time"
+  - elsewhere: "We DO NOT sell your personal data", and account deletion
+
+### The AI disclosure was already right — the connector was not
+
+Section 7 carries an explicit AI disclosure: *"MizuMind in Claude is an AI-assisted
+wellness companion... It is not medical care, therapy, diagnosis, or crisis counseling."*
+
+That promise has been public for some time. Until ISS-572 this evening, SERVER_INSTRUCTIONS
+contained no crisis, self-harm or scope language at all — so the policy told members what
+the connector would not do, and nothing in the connector enforced it. The two now agree.
+
+Worth noting for its own sake: a published promise is not an implemented one, and the gap
+between them is invisible from either side alone.
 
 ---
 
