@@ -178,6 +178,8 @@ automatically; verified escalation is Anthropic's call and is not requested.
 | Descriptions describe, do not instruct | PASS as of 5af49a69 — **was failing on 10 of 20**, see §5c |
 | Consumer surface contains no v2/StoryDrop tools | PASS — exact-set pinned, see §5c |
 | Card tap targets ≥ 44px | PASS as of a866eec9 — two of three were 16px/28px, see §5c |
+| Time-of-day answers use the member's zone | PASS as of 39df3aad — **was failing in 2 of 3 paths**, see §5c |
+| Every write tool has a reachable read surface | PASS — all 7 round-tripped live, see §5c |
 
 ---
 
@@ -286,6 +288,41 @@ Every one was guarded by something that read a *copy* or a *list*, not the thing
 — a test naming what must be absent, a description nobody asserted on, a CSS shell
 rather than the shipped bundle. Same shape as ISS-545 earlier in the day, where four
 green guards all read git while production sat eleven commits stale.
+
+### The clock was the member's in only one of three places (ISS-561, ISS-562)
+
+`suggest_focus_exercise`, probed live at 16:53 America/Chicago, answered a **deep-work**
+request with *"Midnight Breathing — Moon & stars sleep wind-down."* Minutes earlier
+`get_checkin_suggestion` had correctly said dayPart "noon" for the same account. Two
+tools disagreed about what time it was for the same member in the same minute.
+
+Both focus lookups derived the hour from `now.getHours()` — the server clock, UTC on the
+box. ISS-500 fixed exactly this for check-ins by threading `users/{uid}.timezone` through
+`hourInZone`; the focus path shares the same ladder and never got it.
+
+Sweeping the class found a third: `distinctDays` in journal-trends carried the docstring
+"Distinct **local** calendar days" over a body using `toISOString()` — UTC. For an app
+about evenings that is wrong in both directions, and it is shown to the member as
+"N entries across N days in the last 7 days".
+
+All three now resolve in the member's zone and report which clock they used.
+
+### Every write tool round-tripped (ISS-558, ISS-559, ISS-560)
+
+Checked each of the seven v1 write tools for a **reachable** read surface. Two failed:
+`update_user_preference` wrote a document nothing governing check-ins reads (proven live
+— the settings echo back saved and `nextCheckinAt` does not move), and
+`set_practice_goal` was orphaned when we removed the `mizu` catch-all earlier the same
+day, leaving no v1 tool able to read a goal back. Round-tripping the journal then
+surfaced ciphertext reaching members on structuredContent-rendering hosts.
+
+### What these have in common with §5c above
+
+Every one was guarded by something that read a copy, a list, or the easy half: a test
+naming what must be absent, a description nobody asserted on, a CSS shell rather than the
+shipped bundle, a doubles-set that implemented only the write. Twice the full suite passed
+**identically** before and after a real fix, which is the cheapest signal that nothing was
+pinning the thing at all.
 
 ---
 
