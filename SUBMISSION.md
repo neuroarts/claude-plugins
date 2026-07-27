@@ -37,10 +37,26 @@ construction and is not consumable by those surfaces.
 
 ```
 repo   github.com/neuroarts/claude-plugins
-ref    v1.1.6
-sha    (resolve from the tag: `git rev-list -n1 v1.1.6`)
+ref    v1.1.7
+sha    (resolve from the tag: `git rev-list -n1 v1.1.7`)
 slug   mizumind
 ```
+
+
+**Updated 2026-07-27 evening (was v1.1.6).** v1.1.6 does NOT contain the tool-catalogue
+fix. It shipped `mizumind/skills/mizu-help/references/tool-catalog.md` naming two tools a
+consumer cannot call — `mizu_focus_cockpit` (gated to business scopes, ISS-554) and
+`create_issue` (pulled from the public surface) — and never mentioning the practice area
+at all. Its sibling `verify-tool-catalog.sh` reported OK throughout, because it compares
+the catalogue against a hardcoded list inside itself (ISS-563).
+
+The fix landed in 6c56303, AFTER the tag. Pinning a tag is the right discipline — the
+whole point of the note below — but a tag only pins what existed when it was cut, and
+nothing re-checks that the pinned ref still contains the latest fix. Caught by asking what
+`git show v1.1.6:tool-catalog.md` actually contains, rather than trusting that "the plugin
+is fixed" meant "the pinned ref is fixed".
+
+`claude plugin validate` re-run at v1.1.7: **passed**.
 
 The sha is deliberately NOT written out here. A commit that records its own sha is
 impossible — writing the number changes HEAD, and I chased that around three commits
@@ -57,7 +73,7 @@ clock, which is the container's UTC in cloud Cowork).
 predates ISS-478's fix for a duplicate `hooks` reference that **crashed plugin load and left
 the MCP server unregistered**. Submitting it would ship a plugin that does not work.
 
-`claude plugin validate` — **passed** at v1.1.4. Plugin hook tests 36/36.
+`claude plugin validate` — **passed**, re-run at v1.1.7 (2026-07-27). Plugin hook tests 36/36.
 
 ---
 
@@ -170,7 +186,7 @@ automatically; verified escalation is Anthropic's call and is not requested.
 | Public documentation URL | PASS — live, 3 steps + 4 sample prompts |
 | Support contact | PASS |
 | Reviewer test account | reported done (mizumind-reviewer@) — **not re-verified by me** |
-| `claude plugin validate` | PASS at v1.1.3 |
+| `claude plugin validate` | PASS — re-run at v1.1.7, 2026-07-27 |
 | Origin-header validation | PASS — LIVE as of 4dcaab7f; authenticated calls unaffected |
 | OAuth flow end-to-end (DCR -> authorize -> login) | PASS — probed live 2026-07-27, see §5d |
 | PKCE **enforced**, not merely advertised | PASS — no-challenge and `plain` both rejected, see §5d |
