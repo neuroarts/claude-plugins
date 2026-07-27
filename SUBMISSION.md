@@ -222,11 +222,8 @@ second kind.
 
 ## 6. What only a human can do
 
-1. **Capture 3–5 carousel screenshots** — PNG, ≥1000px wide, cropped to the app response
-   only (no prompt visible), prompt text supplied separately, no video/GIF. One per card is
-   the natural set: practice card, Today cockpit, CRM card. These must come from a live
-   Claude session with real data — a headless render of the card HTML would be an empty
-   shell, since the cards fetch through the MCP-Apps host bridge.
+1. **Capture 3–5 carousel screenshots** — see §10. The naive "one per card" plan is WRONG
+   and would have leaked customer data.
 2. **Confirm the org is Team or Enterprise** with directory-management access.
 3. **Submit the forms** and complete the live OAuth click-through.
 4. **Deploy the connector** so the Origin-validation hardening is live before a reviewer probes it.
@@ -330,3 +327,55 @@ The **21-tool zero-grant view** is unit-tested and mutation-verified, but cannot
 confirmed live from this session: the signed-in identity carries `ops` and `storydrop`
 grants and therefore sees all 30. Confirming it live needs the reviewer test account —
 worth doing before submitting, since it is the exact view a reviewer gets.
+
+
+---
+
+## 10. Carousel capture — corrected 2026-07-27 after a live run
+
+An earlier draft of this dossier said "one per card is the natural set: practice card,
+Today cockpit, CRM card." **Do not do that.** A Cowork run against the deployed build
+found two reasons, one of them serious.
+
+### The CRM card must not be in the carousel
+
+`mizu_crm_card` **is not in the reviewer's 21-tool view.** Verified: it requires a
+StoryDrop grant plus StoryDrop backend config, so a no-grant reviewer never sees the tool
+at all. A carousel image of a card a reviewer cannot reach invites the obvious question,
+and the listing would be advertising a surface the listing does not grant.
+
+Worse, the live capture **showed real lead names and real account names**. That image
+cannot ship publicly under any circumstance — it is customer data, and a directory
+carousel is a public asset. Discard any CRM capture already taken; do not crop around it.
+
+### Shoot from the REVIEWER TENANT, not an operator account
+
+The Today cockpit renders **StoryDrop and ops-backlog business data when the caller holds
+operator grants**. A cockpit shot taken from Bootstrap's identity therefore shows content a
+reviewer will never see — a carousel that misrepresents the product to the person checking
+whether the carousel represents the product.
+
+So: sign in as `mizumind-reviewer@neuroarts.ai` (no grants) and capture from there. That
+single change fixes both problems at once — no business data, no unreachable cards, and
+the images match exactly what a reviewer gets.
+
+### The set, given only two reviewer-visible cards
+
+Reviewer-visible ui:// resources are `mizu_practice_card` and `mizu_focus_cockpit`. The
+spec wants 3–5 images, and nothing requires each to be a different card:
+
+1. Practice card — morning/daytime suggestion
+2. Practice card — evening/wind-down suggestion (different day-part, different sessions)
+3. Today cockpit — wellness-only state, as a reviewer sees it
+4. *(optional)* `list_wellness_tools` catalogue response — a real app response, no card
+5. *(optional)* a journal read-back
+
+Same spec as before: PNG, ≥1000px wide, cropped to the app response with no prompt
+visible, prompt text supplied separately, no video/GIF.
+
+### Capture mechanics
+
+The Chrome extension's own screenshots cap at CSS resolution (~734px, saved at 609px JPEG),
+which fails both the format and the width requirement. The native screen buffer via the
+device bridge yields higher-res PNG, but needs the card's tab frontmost. Plan for a
+human-in-the-loop capture rather than an automated one.
