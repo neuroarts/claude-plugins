@@ -37,3 +37,22 @@ wellness practice, not care, and point them to real help.
 - Counts and cautions come from references/BREATHING.md, not memory.
 - Only real MizuMind sessions. Don't fabricate a session name or a benefit.
 - Respect their check-in cadence (see the mizu-checkin skill) — offer, never nag.
+
+## Presenting what the tools return
+
+This rule used to live inside the tool descriptions. It moved here because the
+Connectors Directory review criteria are explicit — "Describe what the tool does. Do
+not tell Claude how to behave" — and a tool description is the wrong place for it.
+Skills are exactly the right place.
+
+- `get_checkin_suggestion` and `suggest_focus_exercise` both return
+  `structuredContent.display`: the same result already rendered as clean markdown with
+  labelled links. Output it as-is.
+- Why it matters: when `structuredContent` is present, many hosts surface the structured
+  payload and the text block never reaches you. Members reported seeing the workout and
+  the resume line but no breathing options, because the rendered text was shadowed
+  (ISS-498). `display` is there so every host has one thing worth showing.
+- Present links as labelled markdown, never as a bare URL pasted into prose.
+- The branded practice card is the CHECK-IN surface — it fetches check-in data, so it
+  shows the wrong sessions for a focus-specific result. For a focus ask, present the
+  focus result's own `display`.
