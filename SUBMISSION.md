@@ -37,16 +37,22 @@ construction and is not consumable by those surfaces.
 
 ```
 repo   github.com/neuroarts/claude-plugins
-ref    v1.1.3
-sha    6b9e369
+ref    v1.1.4
+sha    d38b3df
 slug   mizumind
 ```
+
+**Updated 2026-07-27 (was v1.1.3 / 6b9e369).** v1.1.3 predates two behavioural fixes,
+both for defects observed live in cloud Cowork: ISS-548 (the mizu-focus skill instructed
+Claude to coach breathing in the chat — "or we do it right here, no app needed", which
+logs nothing) and ISS-543 part 2 (the hook asserted a day-part computed from the naive
+clock, which is the container's UTC in cloud Cowork).
 
 **Do not submit v1.1.0 / 315a7f8**, which the old dossier names. It is 10 commits behind and
 predates ISS-478's fix for a duplicate `hooks` reference that **crashed plugin load and left
 the MCP server unregistered**. Submitting it would ship a plugin that does not work.
 
-`claude plugin validate` — **passed** at v1.1.3.
+`claude plugin validate` — **passed** at v1.1.4. Plugin hook tests 36/36.
 
 ---
 
