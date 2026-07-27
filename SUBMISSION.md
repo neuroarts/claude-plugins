@@ -172,7 +172,9 @@ automatically; verified escalation is Anthropic's call and is not requested.
 | Reviewer test account | reported done (mizumind-reviewer@) — **not re-verified by me** |
 | `claude plugin validate` | PASS at v1.1.3 |
 | Origin-header validation | PASS — LIVE as of 4dcaab7f; authenticated calls unaffected |
-| MCP Inspector run against the server | PARTIAL — connects, 401 contract verified; tool exercise needs an interactive OAuth token (§9) |
+| OAuth flow end-to-end (DCR -> authorize -> login) | PASS — probed live 2026-07-27, see §5d |
+| PKCE **enforced**, not merely advertised | PASS — no-challenge and `plain` both rejected, see §5d |
+| MCP Inspector run against the server | PARTIAL — every step verified live except the final code->token exchange, which needs an interactive login (§5d) |
 | MCP Apps carousel screenshots | **MISSING — blocker** |
 | Separate read and write tools | PASS — the catch-all is no longer reviewer-visible (§5a) |
 | Descriptions describe, do not instruct | PASS as of 5af49a69 — **was failing on 10 of 20**, see §5c |
@@ -323,6 +325,42 @@ naming what must be absent, a description nobody asserted on, a CSS shell rather
 shipped bundle, a doubles-set that implemented only the write. Twice the full suite passed
 **identically** before and after a real fix, which is the cheapest signal that nothing was
 pinning the thing at all.
+
+---
+
+## 5d. OAuth gate — probed live against production, 2026-07-27
+
+The #1 documented rejection cause, verified by exercising it rather than by reading the
+metadata. Everything below is against `auth.neuroarts.ai` / `mcp.neuroarts.ai` after the
+`4c8b6d69` deploy.
+
+| Step a reviewer's client takes | Probe | Result |
+|---|---|---|
+| Discover the resource | unauthenticated POST /mcp | 401 + `WWW-Authenticate` naming the PRM |
+| Read Protected Resource Metadata | GET /.well-known/oauth-protected-resource | 200, `resource` exactly matches the endpoint |
+| Read AS metadata | GET /.well-known/oauth-authorization-server | S256 only, no client_credentials, DCR present |
+| **Register a new client (DCR)** | POST /register | **201**, public client (`token_endpoint_auth_method: none`), `offline_access` granted |
+| Start the flow with PKCE | GET /authorize + S256 challenge | 200, "Sign in to MizuMind" |
+| Final code -> token exchange | — | NOT probed: needs an interactive login |
+
+### PKCE is ENFORCED, not just advertised
+
+The distinction matters: metadata can claim S256 while the endpoint accepts anything.
+Both negative cases were probed.
+
+    no code_challenge   -> 302 to the client's redirect_uri with
+                           error=invalid_request
+                           error_description="code_challenge required (PKCE S256)"
+    method=plain        -> 302 ... "Only code_challenge_method=S256 is supported"
+    client_credentials  -> {"error":"unsupported_grant_type"}
+
+Both rejections are spec-correct error redirects rather than bare 400s, and both carry
+the `iss` parameter (RFC 9207 issuer identification — the authorization-server mix-up
+defence). That is a detail most implementations omit.
+
+The only untested link in the chain is the final code->token exchange, which cannot be
+driven without an interactive sign-in. Cowork performs exactly that step when it signs
+in as the reviewer account, so the chain closes there.
 
 ---
 
