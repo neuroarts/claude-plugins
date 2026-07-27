@@ -66,10 +66,25 @@ def test_decide():
 def test_day_part():
     print("user_prompt_submit.day_part:")
     dp = load("user_prompt_submit", "user_prompt_submit.py").day_part
-    cases = {0: "night", 4: "night", 5: "morning", 10: "morning", 11: "daytime",
-             15: "daytime", 16: "evening", 20: "evening", 21: "night", 23: "night"}
+    # ISS-543: these cases used to assert the hook's OWN drifted ladder
+    # (daytime/night on 11/16/21), which is why it stayed green while disagreeing
+    # with the connector for 10 of 24 hours. The expected values below are the
+    # connector's dayPartForHour + the Flutter daily_solar_practices ladder, which
+    # agree with each other (ISS-532). Every boundary is pinned, plus each hour
+    # that the drifted version got wrong.
+    cases = {
+        0: "bedtime", 4: "bedtime",            # was "night"
+        5: "morning", 11: "morning",           # 11 was "daytime"
+        12: "noon", 15: "noon", 16: "noon",    # 12-15 were "daytime", 16 was "evening"
+        17: "evening", 20: "evening",
+        21: "bedtime", 23: "bedtime",          # was "night"
+    }
     for hour, expect in cases.items():
         check(f"hour {hour:>2} -> {expect}", dp(hour) == expect)
+    # No hour may produce a label the connector's TOOL_PLAN cannot key on.
+    known = {"morning", "noon", "evening", "bedtime"}
+    check("all 24 hours yield a known label",
+          all(dp(h) in known for h in range(24)))
 
 
 # ---- Layer 2: stdin -> JSON output contract ------------------------------------------

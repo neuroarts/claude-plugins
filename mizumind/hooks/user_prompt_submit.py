@@ -17,14 +17,31 @@ import sys
 
 
 def day_part(hour: int) -> str:
-    # Mirrors the connector's dayPartForHour buckets (library.ts).
-    if 5 <= hour < 11:
+    """The connector's dayPartForHour buckets — REALLY mirrored this time.
+
+    ISS-543. The previous version carried this same "mirrors the connector"
+    comment while matching neither the labels nor the boundaries: it returned
+    morning/daytime/evening/night on 5/11/16/21, against the connector's
+    morning/noon/evening/bedtime on 5/12/17/21. It disagreed for 10 of 24 hours
+    and two of its four labels ("daytime", "night") existed on no other surface,
+    so the practice this hook told Claude to offer could not match the one
+    get_checkin_suggestion would return.
+
+    Canonical source (these two agree, ISS-532):
+      neuroarts-tech/packages/mcp-mizu/src/tools/library.ts  dayPartForHour
+      mizumind/apps/flutter/lib/features/breathing/daily_solar_practices.dart
+
+    Kept in sync by ops/scripts/check_day_part_parity.py in multi-agent-core,
+    which now pins this file as a third surface — it previously read only the
+    other two, which is why this drifted unnoticed.
+    """
+    if 5 <= hour < 12:
         return "morning"
-    if 11 <= hour < 16:
-        return "daytime"
-    if 16 <= hour < 21:
+    if 12 <= hour < 17:
+        return "noon"
+    if 17 <= hour < 21:
         return "evening"
-    return "night"
+    return "bedtime"
 
 
 def main() -> None:
