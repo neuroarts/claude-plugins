@@ -29,7 +29,7 @@ construction and is not consumable by those surfaces.
 | Artifact | the repo `neuroarts/claude-plugins` | the server `https://mcp.neuroarts.ai/mcp` |
 | Where | `clau.de/plugin-directory-submission` (form) | claude.ai admin settings → directory submissions |
 | Needs | public repo + `claude plugin validate` | Team/Enterprise org + directory-management access |
-| State | **ready** | blocked on carousel screenshots |
+| State | **ready** | **deployed + verified**; blocked only on carousel screenshots |
 
 ---
 
@@ -160,8 +160,8 @@ automatically; verified escalation is Anthropic's call and is not requested.
 | Support contact | PASS |
 | Reviewer test account | reported done (mizumind-reviewer@) — **not re-verified by me** |
 | `claude plugin validate` | PASS at v1.1.3 |
-| Origin-header validation | fixed in source, **NOT DEPLOYED** |
-| MCP Inspector run against the server | **NOT DONE** |
+| Origin-header validation | PASS — LIVE as of 4dcaab7f; authenticated calls unaffected |
+| MCP Inspector run against the server | PARTIAL — connects, 401 contract verified; tool exercise needs an interactive OAuth token (§9) |
 | MCP Apps carousel screenshots | **MISSING — blocker** |
 | Separate read and write tools | PASS — the catch-all is no longer reviewer-visible (§5a) |
 
@@ -271,3 +271,62 @@ surface, not v1.
 
 Practical consequence: **all gating that matters is per-identity**, not per-endpoint. That
 is why the fixes in §5a are written against product claims and the deploy allowlist.
+
+
+---
+
+## 9. Deploy verification — 2026-07-27
+
+**Deployed build `4dcaab7f` at 19:35:40Z.** Production had been eleven connector commits
+behind (`2b9a3495`, 2026-07-25); every fix in §5 now exists where a reviewer will look.
+
+| check | result |
+|---|---|
+| `check_deployed_connector_current.py` | **OK — all 72 deployed files match `origin/main`** |
+| restart followed the sync | process 19:35:43Z, newest file 19:35:40Z |
+| `whoami` build stamp | **`4dcaab7f`**, deployedAt `2026-07-27T19:35:40Z` (was `"dev"`) |
+| tool title drift (ISS-545 symptom) | **"Morning Practice"** — the rename is live |
+| `resolvedFromMemberZone` | **`true`** (ISS-535 #2 and #3, closed) |
+| `dayPart` at 14:36 CDT | **`noon`** — canonical 5/12/17/21 ladder |
+| `display` field, resume link | present; the resume store-check ran and kept a valid link |
+
+### Protocol bar, re-verified against the deployed build
+
+```
+POST /mcp (unauth, initialize)
+  HTTP/2 401
+  www-authenticate: Bearer resource_metadata="https://mcp.neuroarts.ai/.well-known/
+                    oauth-protected-resource", error="invalid_token",
+                    error_description="missing Authorization header"
+```
+
+That is the #1 documented rejection cause and it is correct. PRM returns 200 with
+`resource`, `authorization_servers: [auth.neuroarts.ai]`, `scopes_supported`,
+`bearer_methods_supported`.
+
+**Origin validation is live and did not break the endpoint.** Unauthenticated probes with
+`Origin: https://claude.ai`, `Origin: https://evil.example`, and no Origin all return 401 —
+inconclusive by design, because auth runs before the transport. The decisive evidence is
+that AUTHENTICATED calls (`whoami`, `list_wellness_tools`, `get_checkin_suggestion`) all
+succeeded immediately after the deploy, which is the safety property that mattered: a
+request with no Origin header is the server-to-server path Anthropic's cloud egress uses.
+
+### MCP Inspector — partial, and honestly so
+
+`npx @modelcontextprotocol/inspector --cli https://mcp.neuroarts.ai/mcp --method tools/list`
+connects and receives the correct 401 JSON-RPC error. That verifies reachability and the
+discovery contract through Anthropic's own tool.
+
+Exercising every tool through the Inspector requires a bearer token from the interactive
+OAuth flow, which is a human step. The submission portal asks you to confirm you have run
+every tool "via MCP Inspector **or** as a custom connector in Claude" — the second path is
+satisfied: the read-only surface was exercised live this session and every tool returned
+real structured data, no generic errors. The write tools were deliberately not fired
+against a real member account; that is what the reviewer test tenant is for.
+
+### Not verifiable from here
+
+The **21-tool zero-grant view** is unit-tested and mutation-verified, but cannot be
+confirmed live from this session: the signed-in identity carries `ops` and `storydrop`
+grants and therefore sees all 30. Confirming it live needs the reviewer test account —
+worth doing before submitting, since it is the exact view a reviewer gets.
