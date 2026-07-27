@@ -472,6 +472,43 @@ between them is invisible from either side alone.
 
 ---
 
+## 5g. Every claim in the listing copy, checked against the running connector
+
+The description is not marketing that sits beside the product — each sentence is a
+promise a reviewer can test in one call. Verified 2026-07-27 against the deployed build.
+
+| claim in the submitted copy | verified how | state |
+|---|---|---|
+| "a session that opens in the MizuMind app" | every portalUrl is flow.mizumind.app | LIVE |
+| "logs to your actual history, streak, and progress" | log_practice_session -> get_practice_progress round trip | LIVE |
+| "Claude never runs a timer in the chat or invents an exercise" | SERVER_INSTRUCTIONS "NEVER substitute a device timer" | LIVE |
+| "Suggestions are matched to the time of day" | get_checkin_suggestion returned dayPart "evening" at 18:5x local | LIVE |
+| **"computed in your own timezone rather than the server's"** | `resolvedFromMemberZone: true` — 23:5x UTC would be *bedtime*, it correctly returned evening | **LIVE, but only since ISS-561 today** |
+| "offers to resume that first" | the resume line is the FIRST element of `display` | LIVE |
+| "see how entries trend over time" | list_journal_entries returns a `trends` block | LIVE |
+| "encrypted on your device ... this connector cannot read them and does not try" | ciphertext preserved in `notes`, rendered as an explanation (ISS-560) | LIVE |
+| "you can disconnect at any time" | OAuth; privacy policy §7 states it | LIVE |
+| **"not medical care, therapy, diagnosis, or crisis support"** | the copy is accurate as a disclaimer, but until ISS-572 nothing in the connector ACTED on it | **STAGED, NOT DEPLOYED** |
+
+### What this exercise was actually for
+
+Two of the claims we are submitting were **not true of the connector** when they were
+written:
+
+  - the timezone sentence was false for `suggest_focus_exercise` until ISS-561 this
+    afternoon — it answered a 16:53 deep-work request with "Midnight Breathing" off the
+    server clock
+  - the crisis disclaimer was accurate as a statement about the product, while the
+    connector itself carried no crisis, self-harm or scope guidance for any client that
+    had not installed the plugin (ISS-572, still undeployed)
+
+Nobody wrote either claim dishonestly. They describe what the product is meant to be, and
+the drift between intent and implementation is invisible unless someone reads the copy
+with the running system in front of them. That is the whole exercise: marketing copy is a
+specification nobody tests.
+
+---
+
 ## 6. What only a human can do
 
 1. **Capture 3–5 carousel screenshots** — see §10. The naive "one per card" plan is WRONG
