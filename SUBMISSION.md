@@ -22,14 +22,54 @@ construction and is not consumable by those surfaces.
 
 ---
 
-## 1. Two submissions, not one
+## 1. Two submissions — one is open to us today, one is plan-gated
 
-| | Plugin Directory | Connectors Directory |
-|---|---|---|
-| Artifact | the repo `neuroarts/claude-plugins` | the server `https://mcp.neuroarts.ai/mcp` |
-| Where | `clau.de/plugin-directory-submission` (form) | claude.ai admin settings → directory submissions |
-| Needs | public repo + `claude plugin validate` | Team/Enterprise org + directory-management access |
-| State | **ready** | **deployed + verified**; blocked only on carousel screenshots |
+**Re-scoped 2026-07-28.** This section previously listed both tracks as if they were
+equally available and called carousel screenshots the only blocker. That was wrong in the
+way that mattered: the Connectors Directory portal lives in claude.ai **admin settings**,
+and per the docs "Admin settings aren't available on individual plans." Bootstrap is on an
+individual plan, so that track was never reachable — while the plugin track, which IS
+reachable, was being treated as the secondary one.
+
+### TRACK 1 — Plugin Directory. Submit this. No plan upgrade, no screenshots.
+
+| | |
+|---|---|
+| Artifact | the repo `neuroarts/claude-plugins`, ref **v1.1.7** (sha `1303cc9`), slug `mizumind` |
+| Where | **`platform.claude.com/plugins/submit`** (Console) |
+| Needs | public repo + `claude plugin validate` (PASSED at v1.1.7) + a free Console account |
+| State | **READY — nothing blocking** |
+
+The docs name this path for exactly our situation, verbatim:
+
+> "**Console** requires a Developer, Admin, or Owner role on a Console organization.
+> **Individual authors who aren't part of a claude.ai Team or Enterprise organization can
+> sign up for Console at platform.claude.com and submit there.**"
+
+There is a second plugin URL — `claude.ai/admin-settings/directory/submissions/plugins/new`
+— but it carries the same Team/Enterprise gate as the connector portal. Use Console.
+
+**The connector ships inside the plugin.** "Plugins can contain any MCP, including remote
+MCPs" — `mizumind` bundles the `mcp.neuroarts.ai` server config plus all five skills. So
+this single submission puts the connector in front of every Cowork and Claude Code user.
+
+Carousel screenshots are an MCP-Apps requirement of the CONNECTORS submission (§5i). The
+plugin path does not ask for them, so they do not block this track.
+
+### TRACK 2 — Connectors Directory. Blocked on a plan decision, not on us.
+
+| | |
+|---|---|
+| Artifact | the server `https://mcp.neuroarts.ai/mcp` |
+| Where | claude.ai admin settings → directory submissions |
+| Needs | **Team or Enterprise organization** + directory-management access |
+| State | server deployed + verified; submission GATED on the org plan |
+
+Everything technical for this track is done and verified (§4, §5a-i): 20-tool consumer
+surface, OAuth/PKCE enforced, annotations accurate, privacy policy, docs URL, reviewer
+test account seeded. What remains is not engineering — it is whether a Team upgrade is
+worth the directory listing. Outstanding work items if that decision is yes: carousel
+screenshots (§10) and declaring the allowed link URI `https://flow.mizumind.app` (§5i).
 
 ---
 
