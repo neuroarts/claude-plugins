@@ -143,9 +143,23 @@ the connector portal offers it. Keep wellness/mindfulness/breathing as keywords.
 
 ### What users need before connecting
 ```
-A MizuMind account (free to create at mizumind.app). Sign in happens through MizuMind's
-OAuth flow when you connect. No plan or payment is required to use the connector.
+A MizuMind account — free, and created for you the first time you sign in with Google.
+When you connect, MizuMind's OAuth page opens and you choose "Continue with Google";
+if you have not used MizuMind before, that first sign-in creates your account. Existing
+members can sign in with email and password instead. No plan or payment is required to
+use the connector.
 ```
+
+_Corrected 2026-07-27. The previous wording — "free to create at mizumind.app" — pointed
+at a page with no signup: `/signup`, `/register` and `/login` all 404 on both
+mizumind.app and flow.mizumind.app, and the OAuth page carries no sign-up link. Resolved
+by reading the gateway rather than by testing in production: `src/lib/login-page.ts` uses
+`signInWithPopup(auth, new GoogleAuthProvider())`, which auto-provisions in Firebase Auth
+on first sign-in, while the email path is `signInWithEmailAndPassword` only — there is no
+`createUserWithEmailAndPassword` anywhere in the gateway. So Google IS the account-creation
+route and email/password is sign-in only. A reviewer without a Google account has no
+self-serve path; that is a real constraint, now stated accurately instead of pointing at
+a page where signup does not exist._
 
 ### Reads / writes
 ```
