@@ -221,13 +221,14 @@ automatically; verified escalation is Anthropic's call and is not requested.
 | Privacy policy live, covers the connector | PASS — **content read and verified** 2026-07-27, see §5f |
 | Public documentation URL | PASS — live, 3 steps + 4 sample prompts |
 | Support contact | PASS |
-| Reviewer test account | PASS — exists, `products: []` verified against prod Firestore with a control (§5h); needs a timezone + some history before captures |
+| Reviewer test account | **REQUIRED** (docs: "have your ... test account credentials ready"; Test & launch step wants "credentials for a fully populated account"). PASS — exists, `products: []` verified with a control (§5h), timezone + history seeded 2026-07-28 |
 | `claude plugin validate` | PASS — re-run at v1.1.7, 2026-07-27 |
 | Origin-header validation | PASS — LIVE as of 4dcaab7f; authenticated calls unaffected |
 | OAuth flow end-to-end (DCR -> authorize -> login) | PASS — probed live 2026-07-27, see §5d |
 | PKCE **enforced**, not merely advertised | PASS — no-challenge and `plain` both rejected, see §5d |
 | MCP Inspector run against the server | PARTIAL — every step verified live except the final code->token exchange, which needs an interactive login (§5d) |
-| MCP Apps carousel screenshots | **MISSING — blocker** |
+| MCP Apps carousel screenshots | **REQUIRED — blocker.** Docs: MCP Apps "have the additional requirement of including screenshots". PNG, >=1000px, 3-5, cropped to the app response, no prompt in-image, prompts supplied separately, no video/GIF |
+| Allowed link URIs declared | **NOT DONE** — must list `https://flow.mizumind.app` or users get an "Open external link" prompt on EVERY practice tap (§5i) |
 | Separate read and write tools | PASS — the catch-all is no longer reviewer-visible (§5a) |
 | Descriptions describe, do not instruct | PASS as of 5af49a69 — **was failing on 10 of 20**, see §5c |
 | Consumer surface contains no v2/StoryDrop tools | PASS — exact-set pinned, see §5c |
@@ -576,6 +577,55 @@ sign-in and is the first thing Cowork does.
 are vended; both change what the screenshots show — an untimezoned account computes the
 day-part from the box's UTC clock, and an empty account renders "No practice history
 yet". Detail and fix in the reviewer-account handoff.
+
+---
+
+## 5i. Requirements re-verified against the live docs — 2026-07-28
+
+Two rows in this ledger had no citation, and on 2026-07-28 I told Bootstrap the test
+account was probably not required because I could not find the requirement. That was
+wrong: "I could not find it" is not "it is not required". Both are documented at
+`claude.com/docs/connectors/building/submission`.
+
+**Screenshots — required, because MizuMind is an MCP App:**
+> "MCP Apps — MCP servers that surface interactive UI elements. These have the
+> additional requirement of including screenshots for submission and listing."
+
+Spec: PNG, width >= 1000px, count 3-5, cropped to the app response with the prompt NOT
+in the image, any aspect ratio, prompt text supplied separately per screenshot, no
+separate mobile assets, video/GIF not accepted. A carousel template exists in the
+Anthropic MCP Apps Figma community file.
+
+**Test account — required:**
+> "Before you start, have your documentation URL, privacy policy URL, icon, and test
+> account credentials ready"
+
+and the portal's Test & launch step wants "access instructions detailed enough for a
+reviewer to access your server end to end: every link, credential, and step, including
+credentials for a fully populated account where relevant." That clause is why the
+reviewer account was seeded with practice history and journal entries.
+
+### NEW, and not previously tracked: allowed link URIs
+
+> "If your connector uses the `ui/open-link` capability to open URLs ... provide the list
+> of link targets your server will request. Claude uses this list to suppress the 'Open
+> external link' confirmation prompt for destinations you've declared."
+
+Every practice this connector surfaces is a `flow.mizumind.app` deep-link, so without
+this every single tap costs the member a confirmation dialog. Declare
+`https://flow.mizumind.app`. Origins must be owned by the submitting organization —
+this one is. Optional field, but omitting it degrades the core interaction.
+
+### Other portal facts worth having before starting
+
+  - the portal saves progress per browser session; you can move between steps
+  - Compliance is SEVEN required acknowledgments (directory guidelines, first-party API
+    use, financial transactions, AI media generation, prompt injection, conversation data
+    collection, public documentation)
+  - Test & launch also asks you to CONFIRM you have run every tool yourself, via MCP
+    Inspector or as a custom connector. Our ledger's Inspector row is that confirmation.
+  - listing limits confirmed: name <= 100, tagline <= 55, description <= 2000, 1-5
+    categories, plus a permanent URL slug
 
 ---
 
