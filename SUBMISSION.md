@@ -35,10 +35,50 @@ reachable, was being treated as the secondary one.
 
 | | |
 |---|---|
-| Artifact | the repo `neuroarts/claude-plugins`, ref **v1.1.7** (sha `1303cc9`), slug `mizumind` |
+| Artifact | the repo `neuroarts/claude-plugins`, ref **v1.1.7** (commit `46c31e0`), slug `mizumind` |
 | Where | **`platform.claude.com/plugins/submit`** (Console) |
 | Needs | public repo + `claude plugin validate` (PASSED at v1.1.7) + a free Console account |
-| State | **READY — nothing blocking** |
+| State | **SUBMITTED 2026-07-28** — "Plugin submitted for review" confirmed by the Console |
+
+> **Sha correction, 2026-07-28.** This row read sha `1303cc9` until submission day. That
+> was never the tag — `1303cc9` is an earlier *docs* commit ("§5e — the post-deploy
+> sweep"), written into this table by hand and then left behind when the tag moved. The
+> annotated tag object is `61cec68`, which dereferences to commit **`46c31e0`**; that is
+> also `HEAD` and `origin/master`. Three shas were in circulation for one artifact.
+>
+> Note the shape: `git rev-parse v1.1.7` prints `61cec68` — the *tag object*, not the
+> commit. Comparing that against `git rev-parse HEAD` shows a mismatch that is not real.
+> Only `git rev-parse 'v1.1.7^{}'` answers the question "what commit is this tag."
+> A sha copied into prose is a proxy for the ref; verify the ref, not the copy.
+
+**What was actually submitted** (Console form, 2026-07-28):
+
+| Field | Value |
+|---|---|
+| Link to plugin | `https://github.com/neuroarts/claude-plugins` |
+| Path within repository | `mizumind` |
+| Plugin homepage | `https://mizumind.app/mizumind/setup` |
+| Plugin name | `MizuMind` |
+| Description | the 1,204-char listing copy (§4) |
+| Example use cases | the four in §4 |
+| Supported platforms | **Claude Code only** |
+| License type | left blank — see below |
+| Privacy policy URL | `https://mizumind.app/privacy` |
+| Contact | `michael@neuroarts.ai` |
+
+**Why Claude Code only, and not Cowork.** The form states: *"Test that the plugin works
+with these surfaces before submitting."* We have direct evidence for Claude Code — the
+plugin's MCP server was loaded and exercised in a live Claude Code session
+(`mcp__plugin_mizumind_mizumind__*` on the tool surface). We have **no** Cowork test at
+all. Declaring an untested surface is a claim we cannot support, and a reviewer finding it
+broken there costs a full review cycle. Adding Cowork is a one-field revision once someone
+has actually run the plugin in Cowork once — that test is the prerequisite, not the
+checkbox.
+
+**Why License type was left blank.** The repo has no `LICENSE` file and `plugin.json`
+declares no license. The field is optional. Typing "MIT" to fill a blank would assert a
+legal fact that is not true anywhere in the repo. If a license is wanted, add the LICENSE
+file first, then amend the submission — in that order.
 
 The docs name this path for exactly our situation, verbatim:
 
