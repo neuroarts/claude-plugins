@@ -221,7 +221,7 @@ automatically; verified escalation is Anthropic's call and is not requested.
 | Privacy policy live, covers the connector | PASS — **content read and verified** 2026-07-27, see §5f |
 | Public documentation URL | PASS — live, 3 steps + 4 sample prompts |
 | Support contact | PASS |
-| Reviewer test account | reported done (mizumind-reviewer@) — **not re-verified by me** |
+| Reviewer test account | PASS — exists, `products: []` verified against prod Firestore with a control (§5h); needs a timezone + some history before captures |
 | `claude plugin validate` | PASS — re-run at v1.1.7, 2026-07-27 |
 | Origin-header validation | PASS — LIVE as of 4dcaab7f; authenticated calls unaffected |
 | OAuth flow end-to-end (DCR -> authorize -> login) | PASS — probed live 2026-07-27, see §5d |
@@ -537,6 +537,45 @@ Nobody wrote either claim dishonestly. They describe what the product is meant t
 the drift between intent and implementation is invisible unless someone reads the copy
 with the running system in front of them. That is the whole exercise: marketing copy is a
 specification nobody tests.
+
+---
+
+## 5h. What the reviewer sees — now MEASURED, not inferred (2026-07-27 19:3x)
+
+§5b/§5c established the consumer surface as a chain of four facts, one of which was an
+assumption: *"a reviewer holds no products."* That link is now measured against the real
+account, using the production entitlement store reading production Firestore:
+
+    mizumind-reviewer@neuroarts.ai   products = []
+    reviewer@neuroarts.ai            products = []
+    bootstrap (control)              products = ["storydrop","ops"]
+
+The control matters. Without it, `[]` is equally consistent with a store that is broken
+and returns nothing for everyone — which would have looked like a pass while proving the
+opposite. Bootstrap's account returning its two real grants shows the store is genuinely
+reading Firestore.
+
+So the full chain, every link now verified rather than assumed:
+
+1. deployed source == origin/main — `check_deployed_connector_current.py`, all 72 files,
+   process started after the newest file
+2. origin/main vends EXACTLY 20 tools to an identity with `products: []` —
+   `iss-552-v1-consumer-surface-exact.test.ts`, mutation-verified
+3. the entitlement gate is ENABLED in production — `ENTITLEMENTS_DISABLED` absent from
+   run-mcp.sh, the systemd unit and `/proc/<pid>/environ`; the running process logged
+   "entitlements: ENABLED"
+4. **the reviewer account genuinely has `products: []`** — measured above, with a control
+
+A reviewer signing in to either account gets the 20-tool wellness surface. The only thing
+still unverified is the final OAuth code->token exchange, which needs an interactive
+sign-in and is the first thing Cowork does.
+
+### Two data gaps on the account that affect the CAPTURES, not the surface
+
+`timezone: null` and zero practice history on both accounts. Neither changes what tools
+are vended; both change what the screenshots show — an untimezoned account computes the
+day-part from the box's UTC clock, and an empty account renders "No practice history
+yet". Detail and fix in the reviewer-account handoff.
 
 ---
 
