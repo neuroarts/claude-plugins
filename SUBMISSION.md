@@ -149,10 +149,27 @@ OAuth flow when you connect. No plan or payment is required to use the connector
 
 ### Reads / writes
 ```
-Both. Reads: your profile, practice progress, check-in state, the exercise catalog,
-your journal entries. Writes: journal entries you ask it to add, logged practice
-sessions, your check-in interval and practice goals.
+Both, scoped to your own MizuMind account.
+
+Reads: your identity, profile, practice progress (streak, program day, in-progress
+flows, recent sessions, active goal), check-in state and cadence, the breathing and
+focus catalog, the guided video lessons, and your journal entries.
+
+Writes: journal entries you ask it to add, practice sessions you ask it to log, your
+practice goal, your check-in mode and interval, your profile preferences, feature
+requests you choose to file, and the timestamp of your last check-in (delivering or
+dismissing a check-in advances your cadence clock).
 ```
+
+_Corrected 2026-07-27. The earlier text omitted three things the connector genuinely
+does: it reads the **video lesson** catalog (`list_videos`, `recommend_video`), it writes
+**feature requests** (`create_feature_request` files to the product backlog), and it
+writes **your last-check-in timestamp** — `dismiss_checkin` always did, and ISS-574
+established that `get_checkin_suggestion` and `checkin_status` do too, via `markCheckedIn`.
+That last one was not knowable when the declaration was written, because those two tools
+were annotated `readOnlyHint: true` at the time. Undeclared reads are untidy; undeclared
+writes are the kind a reviewer is right to care about. Re-derive this field from
+`tools/list` after any tool change._
 
 ### URLs
 ```
