@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+# pre-push — claude-plugins.
+#
+# WHY THIS REPO NEEDS A GATE AT ALL (ISS-562, 2026-07-29). Editing a skill here does not
+# change what members download. The zips served from mizumind.app are BUILD ARTIFACTS
+# produced by scripts/build-skill-zips.sh, and that script has to be re-run. It was not,
+# for six days, and the published mizu-focus kept telling members:
+#
+#     4. Coach it live... Inhale, two, three, four. Hold, two, three, four.
+#
+# after the source had explicitly forbidden pacing a round in chat — an off-app session
+# that logs nothing to their streak, which is the single behaviour the whole connector
+# exists to prevent.
+#
+# The build script was already correct. Nothing ever compared its OUTPUT to its INPUT, so
+# there was no moment at which anyone could notice. That is the gap this closes: you
+# cannot push a skill edit without the published artifact agreeing with it.
+#
+# Versioned under scripts/git-hooks and activated with
+#   git config core.hooksPath scripts/git-hooks
+# so it survives a fresh clone, unlike anything written into .git/hooks.
+set -uo pipefail
+
+ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+GUARD="$HOME/neuroarts/code/multi-agent-core/ops/scripts/check_published_skills_current.py"
+FAILED=0
+
+block() {
+  echo "" >&2
+  echo "[pre-push] BLOCKED: $1" >&2
+  FAILED=1
+}
+
+if [ -f "$GUARD" ]; then
+  echo "[pre-push] published skill zips vs source..."
+  if OUT="$(python3 "$GUARD" 2>&1)"; then
+    printf '%s\n' "$OUT" | sed 's/^/[pre-push]   /'
+  else
+    printf '%s\n' "$OUT" | tail -20
+    block "what we publish is not what we wrote — run scripts/build-skill-zips.sh"
+  fi
+else
+  # Say so out loud. A guard that silently does not exist is the failure mode above.
+  echo "[pre-push] NOTE: skill-parity guard not found at $GUARD — NOT checked."
+fi
+
+# The plugin must still validate, or the marketplace install crashes on load.
+if command -v claude >/dev/null 2>&1; then
+  echo "[pre-push] claude plugin validate..."
+  if ! OUT="$(cd "$ROOT" && claude plugin validate mizumind 2>&1)"; then
+    printf '%s\n' "$OUT" | tail -15
+    block "claude plugin validate failed."
+  else
+    echo "[pre-push]   plugin valid."
+  fi
+else
+  echo "[pre-push] NOTE: claude CLI absent — plugin validate NOT run."
+fi
+
+[ "$FAILED" -ne 0 ] && exit 1
+echo "[pre-push] gate passed — push allowed."
+exit 0
