@@ -44,6 +44,23 @@ else
   echo "[pre-push] NOTE: skill-parity guard not found at $GUARD — NOT checked."
 fi
 
+# The skills must not TELL Claude to run the practice in chat. Separate guarantee from
+# the staleness check above: that one proves we PUBLISH what we wrote, this one proves
+# what we wrote does not re-introduce the ISS-562 metronome at the source, where a
+# faithful republish would carry it straight to members with every other guard green.
+CONTENT_GUARD="$HOME/neuroarts/code/multi-agent-core/ops/scripts/check_skill_content_rules.py"
+if [ -f "$CONTENT_GUARD" ]; then
+  echo "[pre-push] skill content rules (no in-chat practice)..."
+  if OUT="$(python3 "$CONTENT_GUARD" 2>&1)"; then
+    printf '%s\n' "$OUT" | sed 's/^/[pre-push]   /'
+  else
+    printf '%s\n' "$OUT" | tail -20
+    block "a skill instructs an in-chat practice — see ISS-548 / ISS-562."
+  fi
+else
+  echo "[pre-push] NOTE: skill-content guard not found at $CONTENT_GUARD — NOT checked."
+fi
+
 # The plugin must still validate, or the marketplace install crashes on load.
 if command -v claude >/dev/null 2>&1; then
   echo "[pre-push] claude plugin validate..."
