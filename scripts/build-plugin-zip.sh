@@ -20,7 +20,18 @@ trap 'rm -rf "$STAGE"' EXIT
 [ -f "$BUNDLE_DIR/.claude-plugin/plugin.json" ] || { echo "FATAL: $BUNDLE_DIR is not a plugin bundle (.claude-plugin/plugin.json missing)" >&2; exit 1; }
 
 # Clean copy: no .DS_Store, no dotfile junk beyond the required .claude-plugin/.mcp.json
-rsync -a --exclude '.DS_Store' "$BUNDLE_DIR/" "$STAGE/mizumind/"
+#
+# __pycache__ AND *.pyc ARE LOAD-BEARING EXCLUSIONS, not tidiness. ISS-562 recorded that
+# the hand-made zip shipped 3 compiled-bytecode files publicly, and removed them by hand.
+# This script excluded only .DS_Store — so the FIRST run of it after that cleanup put all
+# three straight back. Verified 2026-08-01: the "fix" for that half of ISS-562 was a
+# manual delete that the sanctioned build script silently undid.
+#
+# Bytecode is version- and architecture-stamped (cpython-313), so in a public download it
+# is at best dead weight and at worst a stale compiled copy of a hook shadowing the
+# source it was built from.
+rsync -a --exclude '.DS_Store' --exclude '__pycache__' --exclude '*.pyc' --exclude '*.pyo' \
+  "$BUNDLE_DIR/" "$STAGE/mizumind/"
 
 OUT="$STAGE/mizumind.plugin"
 (cd "$STAGE" && zip -q -r -X "$OUT" mizumind)
